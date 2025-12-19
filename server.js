@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const cors = require('cors');
+const rateLimit = require('express-rate-limit');
 const path = require('path');
 const fs = require('fs');
 
@@ -10,6 +11,20 @@ const PORT = process.env.PORT || 3000;
 // Enable CORS for RisuAI integration
 app.use(cors());
 app.use(express.json());
+
+// Rate limiting for upload endpoint
+const uploadLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per windowMs
+  message: 'Too many upload requests, please try again later.'
+});
+
+// Rate limiting for file access endpoints
+const fileAccessLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 500, // Limit each IP to 500 requests per windowMs
+  message: 'Too many requests, please try again later.'
+});
 
 // Create uploads directory if it doesn't exist
 const uploadsDir = path.join(__dirname, 'uploads');
@@ -60,7 +75,7 @@ app.get('/', (req, res) => {
 });
 
 // Upload endpoint
-app.post('/upload', upload.single('image'), (req, res) => {
+app.post('/upload', uploadLimiter, upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
       return res.status(400).json({ error: 'No image file provided' });
@@ -83,7 +98,7 @@ app.post('/upload', upload.single('image'), (req, res) => {
 });
 
 // Retrieve image endpoint
-app.get('/images/:filename', (req, res) => {
+app.get('/images/:filename', fileAccessLimiter, (req, res) => {
   try {
     const filename = req.params.filename;
     const filepath = path.join(uploadsDir, filename);
@@ -99,7 +114,7 @@ app.get('/images/:filename', (req, res) => {
 });
 
 // List all images endpoint
-app.get('/images', (req, res) => {
+app.get('/images', fileAccessLimiter, (req, res) => {
   try {
     const files = fs.readdirSync(uploadsDir);
     const protocol = req.protocol;
