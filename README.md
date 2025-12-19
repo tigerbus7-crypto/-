@@ -10,6 +10,7 @@ A simple HTTPS-based image storage server that allows you to upload and retrieve
 - 🖼️ Supports JPEG, PNG, GIF, and WebP formats
 - 📊 List all uploaded images
 - 🚀 Easy integration with RisuAI
+- 🛡️ Rate limiting for security (100 uploads/15min, 500 file access/15min per IP)
 
 ## Installation
 
@@ -118,13 +119,20 @@ fetch('http://localhost:3000/upload', {
 - **PORT**: Set environment variable `PORT` to change the server port (default: 3000)
 - **File Size Limit**: Maximum 10MB per image (configurable in server.js)
 - **Allowed Formats**: JPEG, PNG, GIF, WebP
+- **Rate Limits**: 
+  - Upload: 100 requests per 15 minutes per IP
+  - File Access: 500 requests per 15 minutes per IP
 
-## Security Notes
+## Security Features
 
-For production use, consider:
-- Using HTTPS with proper SSL certificates
+- ✅ Rate limiting on all file system access endpoints
+- ✅ File type validation
+- ✅ File size limits
+- ✅ CORS support for controlled access
+
+For production use, also consider:
+- Using HTTPS with proper SSL certificates (deploy behind nginx/Apache or use a hosting platform)
 - Adding authentication/authorization
-- Implementing rate limiting
 - Validating file contents beyond extension checking
 - Setting up proper file storage (e.g., cloud storage)
 
