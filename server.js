@@ -50,7 +50,7 @@ const upload = multer({
 // Root endpoint
 app.get('/', (req, res) => {
   res.json({
-    message: 'HTTPS Image Storage Server for RisuAI',
+    message: 'Image Storage Server for RisuAI',
     endpoints: {
       upload: 'POST /upload - Upload an image',
       retrieve: 'GET /images/:filename - Retrieve an image',
@@ -129,7 +129,8 @@ app.use((error, req, res, next) => {
 
 // Start server
 app.listen(PORT, () => {
-  console.log(`HTTPS Image Storage Server running on port ${PORT}`);
+  console.log(`Image Storage Server running on port ${PORT}`);
   console.log(`Upload images: POST http://localhost:${PORT}/upload`);
   console.log(`Retrieve images: GET http://localhost:${PORT}/images/:filename`);
+  console.log(`Note: For production use with HTTPS, deploy behind a reverse proxy (nginx, Apache) or use a hosting platform with SSL support`);
 });

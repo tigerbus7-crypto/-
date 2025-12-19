@@ -84,7 +84,10 @@
     </div>
 
     <script>
-        const serverUrl = 'http://localhost:3000';
+        // Configuration - change this to match your server URL
+        const serverUrl = window.location.protocol === 'file:' 
+            ? 'http://localhost:3000' 
+            : window.location.origin;
 
         async function uploadImage() {
             const fileInput = document.getElementById('imageInput');
